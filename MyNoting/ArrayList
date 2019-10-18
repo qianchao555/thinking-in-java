@@ -1,0 +1,3 @@
+## ArrayList
+
+底层为动态数组,没有实现同步(synchronized).
