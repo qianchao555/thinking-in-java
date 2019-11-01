@@ -1,0 +1,87 @@
+---------------------------------------------------------------------------------------------------------------
+1. 检查repo是否安装好
+2. 配置  ～/.ssh
+
+	检查该目录下的 config 配置文件中是否有宜宾的gerrit配置
+
+	包含：
+		host gerrityb
+		user your email prefix
+		port 29418
+		hostname 172.19.160.80
+		identityFile ~/.ssh/id_rsa
+
+3. 检查git是否可用
+
+
+
+4. 在用户目录下新建一个工作目录，新建项目目录
+	例如：
+		android@c0409:~$ cd ~;mkdir work;mkdir k420
+
+在k420目录下，打开终端输入提货单（repo：使用Python封装了git的仓库管理工具，一般在Android项目中才会用到repo）、同步代码命令（拉取代码）；
+
+
+提货单：repo init -u gerrit189:sc7731p/platform/manifest -b sw -m K420AG_9.0_MAS_V1.1.xml
+
+同步代码命令 repo sync -r YB -c --no-tags    (加上 -c 参数表示只拉取当前分支)
+
+5. 编译代码
+
+在项目目录下面打开终端,编译 Android项目
+
+	1).设置环境
+
+	使用 envsetup.sh 脚本初始化环境。请注意，将 source 替换成 .（一个点）可以省去一些字符，这种简写形式在文档中更为常用
+		
+		android@c0409:~/work/k420$ source build/envsetup.sh 
+	
+	或      android@c0409:~/work/k420$ . build/envsetup.sh 
+
+
+
+	envsetup.sh 脚本导入了一些命令，可让您使用 Android 源代码，其中包括本练习中使用的命令。以下是一些重要的命令示例：
+
+	lunch - lunch product_name-build_variant 会选择“product_name”作为要编译的产品，并选择“build_variant”作为要编译的变体，然后将这些选择存储在环境中，以便被后续对 m 和其他类似命令的调用读取。
+
+	m - 从树的顶部运行编译版本。这很有用，因为您可以在子目录中运行 make。如果您设置了 TOP 环境变量，它便会使用此变量。如果您未设置此变量，它便会从当前目录中查找相应的树，以尝试找到树的顶层。您可以通过运行不包含参数的 m 来编译整个源代码树，也可以通过指定相应名称来编译特定目标。
+
+	mma - 编译当前目录中的所有模块及其依赖项。
+
+	mmma - 编译提供的目录中的所有模块及其依赖项。
+	
+	croot - cd 到树顶部。
+
+
+	2).选择目标
+
+	使用 lunch 选择要编译的目标。确切的配置可作为参数进行传递。例如，以下命令表示针对某个机型进行完整编译
+
+	android@c0409:~/work/k420$ lunch k210-userdebug   或者 android@c0409:~/work/k420$ lunch 59  (59代表机型编号)
+
+
+	所有编译目标都采用 BUILD-BUILDTYPE 形式，其中 BUILD 是表示特定功能组合的代号。BUILDTYPE 是以下类型之一:
+	
+		编译类型	使用情况
+		user		权限受限；适用于生产环境
+		userdebug	与“user”类似，但具有 root 权限和调试功能；是进行调试时的首选编译类型
+		eng		具有额外调试工具的开发配置
+	
+
+	3).编译代码
+
+	请使用 m 进行所有编译。m 可以使用 -jN 参数处理并行任务。如果您未提供 -j 参数，编译系统便会自动选择其认为对您的系统最佳的并行任务计数
+	
+	
+	android@c0409:~/work/k420$ make -j8
+
+	或者指定项目，输出编译日志文件 android@c0409:~/work/k420$ make -j4 PROJECT_NAME=k420 2>&1 | tee ./build.log
+
+
+
+参考资料：https://source.android.google.cn/setup
+	smb://172.19.160.73/pdf/实习第一课.pptx
+	smb://172.19.160.73/pdf/实习第三课.docx
+	smb://172.19.160.73/pdf/MTK_Flashtool烧机及写号步骤.pdf
+	smb://172.19.160.73/pdf/使用中的 git.pdf
+---------------------------------------------------------------------------------------------------------------------------------------
